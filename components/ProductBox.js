@@ -117,7 +117,7 @@ export default function ProductBox({
   const { addProduct } = useContext(CartContext);
   const [calledOnce, setCalledOnce] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [myColor, setMyColor] = useState("rgb(0, 0, 0)");
+  const [myColor, setMyColor] = useState("rgb(255, 255, 255)");
   const uri = `/product/${_id}`;
 
   useEffect(() => {

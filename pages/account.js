@@ -136,7 +136,7 @@ export default function AccountsPage() {
   const [session, setSession] = useState(null);
   const [user, setUser] = useState({});
   const [calledAlready, setCalledAlready] = useState(false);
-  const [myColor, setMyColor] = useState("rgb(0, 0, 0)");
+  const [myColor, setMyColor] = useState("rgb(255, 255, 255)");
   const [calledOnce, setCalledOnce] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
