@@ -121,6 +121,8 @@ const StyledText = styled.div`
 `;
 
 const StyledSvgLogout = styled.svg`
+  width: 1.4rem;
+  height: 1.4rem;
   @media screen and (max-width: 767px) {
     display: none;
   }
