@@ -9,6 +9,7 @@ import CartIcon from "@/components/icons/CartIcon";
 import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/Product";
 import { useContext } from "react";
+import { Category } from "@/models/Category";
 import styled from "styled-components";
 
 const ColWrapper = styled.div`
