@@ -129,7 +129,7 @@ export default function RegisterPage() {
       notify("Image uploaded successfully", "success");
       return res.data;
     } catch (err) {
-      notify("Error uploading image", "error");
+      notify(`Error uploading image: ${err}`, "error");
       console.error("Error uploading image:", err);
       return "";
     }
