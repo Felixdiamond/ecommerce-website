@@ -19,7 +19,7 @@ const ColWrapper = styled.div`
   gap: 40px;
   margin-top: 40px;
   @media screen and (min-width: 768px) {
-    grid-template-columns: 1.1fr .9fr;
+    grid-template-columns: 1.1fr 0.9fr;
   }
 `;
 
@@ -34,13 +34,9 @@ const Price = styled.span`
   font-weight: bold;
 `;
 
-const PropertiesDiv = styled.div`
+const PropertiesDiv = styled.div``;
 
-`;
-
-const Property = styled.p`
-
-`;
+const Property = styled.p``;
 
 const DaBox = styled.div`
   max-height: 12rem;
@@ -48,7 +44,7 @@ const DaBox = styled.div`
 
 const InnerPriceRow = styled.div`
   display: flex;
-  gap: .6rem;
+  gap: 0.6rem;
   align-items: center;
   justify-content: left;
   text-align: left;
@@ -73,54 +69,69 @@ const BlackDivider = styled.hr`
 `;
 
 const Daboxx = styled.div`
-@media screen and (max-width: 767px) {
-  margin-top: 60vh;
-  margin-bottom: 6vh;
-}
+  @media screen and (max-width: 767px) {
+    margin-top: 60vh;
+    margin-bottom: 6vh;
+  }
+`;
+
+const YahariWhiteBox = styled.div`
+  @media screen and (max-width: 767px) {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 30px;
+  }
 `;
 
 export default function ProductPage({ product }) {
-    const { addProduct } = useContext(CartContext)
+  const { addProduct } = useContext(CartContext);
   return (
     <>
       <Header />
       <Center>
         <ColWrapper>
-        <DaBox>
-          <WhiteBox>
-            <ProductImages images={product.images} />
-          </WhiteBox>
+          <DaBox>
+            <WhiteBox>
+              <ProductImages images={product.images} />
+            </WhiteBox>
           </DaBox>
           <Daboxx>
-            <WhiteBox>
-            <Title>{product.title}</Title>
-            <p>{product.description}</p>
-            <PropertiesDiv>
-              <h2>Properties</h2>
-              <div>
-                {product.category.properties.map((property) => (
-                  <Property key={property.name}>
-                    {property.name}: {property.values[0]}
-                  </Property>
-                ))}  
-              </div>
-            </PropertiesDiv>
-            <PriceRow>
+            <YahariWhiteBox>
+              <Title>{product.title}</Title>
+              <p>{product.description}</p>
+              <PropertiesDiv>
+                <h2>Properties</h2>
+                <div>
+                  {product.category.properties.map((property) => (
+                    <Property key={property.name}>
+                      {property.name}: {property.values[0]}
+                    </Property>
+                  ))}
+                </div>
+              </PropertiesDiv>
+              <PriceRow>
                 <BlackDivider />
-              <InnerPriceRow>
-              <Price>₦{product.discountPrice}</Price>
-              <OldPrice>₦{product.price}</OldPrice>
-              <SavingsInfo>You save ₦{product.price - product.discountPrice}</SavingsInfo>
-              </InnerPriceRow>
-              <BlackDivider />
-              <div>
-                <CustomBtn primary={1} block={1} onClick={() => addProduct(product._id)}>
-                  <CartIcon />
-                  Add to cart
-                </CustomBtn>
-              </div>
-            </PriceRow>
-            </WhiteBox>
+                <InnerPriceRow>
+                  <Price>₦{product.discountPrice}</Price>
+                  <OldPrice>₦{product.price}</OldPrice>
+                  <SavingsInfo>
+                    You save ₦{product.price - product.discountPrice}
+                  </SavingsInfo>
+                </InnerPriceRow>
+                <BlackDivider />
+                <div>
+                  <CustomBtn
+                    primary={1}
+                    block={1}
+                    onClick={() => addProduct(product._id)}
+                  >
+                    <CartIcon />
+                    Add to cart
+                  </CustomBtn>
+                </div>
+              </PriceRow>
+            </YahariWhiteBox>
           </Daboxx>
         </ColWrapper>
       </Center>
