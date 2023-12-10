@@ -10,7 +10,6 @@ import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/Product";
 import { useContext } from "react";
 import styled from "styled-components";
-import { Category } from "@/models/Category";
 
 const ColWrapper = styled.div`
   display: grid;
@@ -72,6 +71,13 @@ const BlackDivider = styled.hr`
   margin: 1rem auto;
 `;
 
+const Daboxx = styled.div`
+@media screen and (max-width: 767px) {
+  margin-top: 60vh;
+  margin-bottom: 6vh;
+}
+`;
+
 export default function ProductPage({ product }) {
     const { addProduct } = useContext(CartContext)
   return (
@@ -84,7 +90,8 @@ export default function ProductPage({ product }) {
             <ProductImages images={product.images} />
           </WhiteBox>
           </DaBox>
-          <div>
+          <Daboxx>
+            <WhiteBox>
             <Title>{product.title}</Title>
             <p>{product.description}</p>
             <PropertiesDiv>
@@ -112,7 +119,8 @@ export default function ProductPage({ product }) {
                 </CustomBtn>
               </div>
             </PriceRow>
-          </div>
+            </WhiteBox>
+          </Daboxx>
         </ColWrapper>
       </Center>
     </>
