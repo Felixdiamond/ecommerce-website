@@ -1,24 +1,22 @@
-import Featured from "@/components/Featured";
+import ControlledCarousel from "@/components/Featured";
 import Header from "@/components/Header";
 import NewProducts from "@/components/NewProducts";
 import { mongooseConnect } from "@/lib/mongoose";
 import { Order } from "@/models/Order";
 import { Product } from "@/models/Product";
 
-export default function HomePage({ featuredProduct, newProducts }) {
+export default function HomePage({ featuredProduct, newProducts, user }) {
   return (
     <div>
-      <Header />
-      <Featured product={featuredProduct} />
-      <NewProducts products={newProducts} />
+      <Header user={user} />
+      <ControlledCarousel />
+      <NewProducts products={newProducts} user={user} />
     </div>
   );
 }
 
 export async function getServerSideProps() {
-  const featuredProductId = "6575d32d7b51f6ef9e5ce12d";
   await mongooseConnect();
-  const featuredProduct = await Product.findById(featuredProductId);
   const newProducts = await Product.find({}, null, {
     sort: { _id: -1 },
     limit: 10,
@@ -35,11 +33,8 @@ export async function getServerSideProps() {
   });
   return {
     props: {
-      featuredProduct: JSON.parse(JSON.stringify(featuredProduct)),
       newProducts: JSON.parse(JSON.stringify(newProducts)),
       lazyOrder: JSON.parse(JSON.stringify(lazyOrder)),
     },
   };
 }
-
-// http://localhost:9000/books-bucket/file-1698531436200.png

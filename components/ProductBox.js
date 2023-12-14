@@ -110,62 +110,14 @@ export default function ProductBox({
   discountPrice,
   price,
   images,
+  user,
+  userFavs,
 }) {
-  const [session, setSession] = useState(null);
-  const [user, setUser] = useState({});
-  const [calledAlready, setCalledAlready] = useState(false);
   const { addProduct } = useContext(CartContext);
   const [calledOnce, setCalledOnce] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [myColor, setMyColor] = useState("rgb(255, 255, 255)");
   const uri = `/product/${_id}`;
-
-  useEffect(() => {
-    const fetchSession = async () => {
-      const session = await supabase.auth.getSession();
-      setSession(session);
-    };
-
-    fetchSession();
-  }, []);
-
-  if (
-    session &&
-    calledAlready == false &&
-    session.data &&
-    session.data.session &&
-    session.data.session.user
-  ) {
-    console.log(session.data.session.user.id);
-  }
-
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      if (
-        session &&
-        session.data &&
-        session.data.session &&
-        session.data.session.user
-      ) {
-        try {
-          await axios
-            .post("/api/findByEmail", {
-              email: session.data.session.user.email,
-            })
-            .then((res) => {
-              setUser(res.data.data);
-            })
-            .catch((error) => {
-              console.error("Error in axios.post:", error);
-            });
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
-    fetchCurrentUser();
-    setCalledAlready(true);
-  }, [session, calledAlready]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -212,7 +164,7 @@ export default function ProductBox({
         <DiscountLabel>
           -{(((price - discountPrice) / price) * 100).toFixed(0)}%
         </DiscountLabel>
-        <Heartify productId={_id} userId={user?._id} userFavs={user?.favorites} />
+        <Heartify productId={_id} userId={user?._id} userFavs={userFavs} />
         <RoundThis>
           <BoxedImg src={images?.[0]} alt="" />
         </RoundThis>
@@ -241,3 +193,4 @@ export default function ProductBox({
     </ProductWrapper>
   );
 }
+

@@ -13,6 +13,7 @@ const OrderSchema = new Schema(
         image: String,
         pdf: Schema.Types.Mixed,
         video: Schema.Types.Mixed,
+        audio: Schema.Types.Mixed,
       },
     ],
   },

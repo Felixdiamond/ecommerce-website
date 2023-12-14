@@ -26,6 +26,7 @@ export default async function handler(req, res) {
         image: product.image,
         pdf: product.pdf,
         video: product.video,
+        audio: product.audio,
       }))
     );
     res.status(200).json({ success: true, data: items });

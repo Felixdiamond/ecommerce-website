@@ -12,7 +12,7 @@ const StyledHeader = styled.h2`
     margin-top: 2rem;
 `;
 
-export default function Categories({ products }) {
+export default function Categories({ products, user }) {
 
   const groupedProducts = products.reduce((acc, product) => {
     
@@ -28,7 +28,7 @@ export default function Categories({ products }) {
 
   return (
     <>
-      <Header />
+      <Header user={user} />
 
       <Center>
         <Title>Categories</Title>  
@@ -44,6 +44,7 @@ export default function Categories({ products }) {
               
               <ProductsGrid 
                 products={groupedProducts[catId]}
+                user={user}
               />
             </>  
           )

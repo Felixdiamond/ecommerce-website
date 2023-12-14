@@ -89,64 +89,14 @@ const ProductImage = styled.img`
   max-width: 100%;
 `;
 
-export default function CartPage() {
+export default function CartPage({ user }) {
   const { cartProducts, addProduct, removeProduct, clearCart } =
     useContext(CartContext);
-  const [session, setSession] = useState(null);
-  const [user, setUser] = useState({});
-  const [calledAlready, setCalledAlready] = useState(false);
   const [products, setProducts] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-
-  useEffect(() => {
-    const fetchSession = async () => {
-      const session = await supabase.auth.getSession();
-      setSession(session);
-    };
-
-    fetchSession();
-  }, []);
-
-  if (
-    session &&
-    calledAlready == false &&
-    session.data &&
-    session.data.session &&
-    session.data.session.user
-  ) {
-    console.log(session.data.session.user.id);
-  }
-
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      if (
-        session &&
-        session.data &&
-        session.data.session &&
-        session.data.session.user
-      ) {
-        try {
-          await axios
-            .post("/api/findByEmail", {
-              email: session.data.session.user.email,
-            })
-            .then((res) => {
-              setUser(res.data.data);
-            })
-            .catch((error) => {
-              console.error("Error in axios.post:", error);
-            });
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
-    fetchCurrentUser();
-    setCalledAlready(true);
-  }, [session, calledAlready]);
 
   useEffect(() => {
     setName(user?.name || "");
@@ -206,12 +156,14 @@ export default function CartPage() {
       products: products.map((item) => {
         const pdfFile = findFile(item.images, '.pdf');
         const mp4File = findFile(item.images, '.mp4');
+        const audioFile = findFile(item.images, '.mp3');
         return {
           id: item._id,
           name: item.title,
           image: item.images[0],
           pdf: pdfFile,
           video: mp4File,
+          audio: audioFile,
           orderId: "",
         };
       }),
@@ -233,7 +185,7 @@ export default function CartPage() {
   if (isSuccess) {
     return (
       <>
-        <Header />
+        <Header user={user} />
         <Center>
           <ColumnsWrapper>
             <Box>
@@ -251,7 +203,7 @@ export default function CartPage() {
 
   return (
     <>
-      <Header />
+      <Header user={user} />
       <Notify />
       <Center>
         <ColumnsWrapper>

@@ -66,9 +66,9 @@ export default function Heartify({ productId, userId, userFavs }) {
     try {
       await axios.post("/api/favorites", { productId, userId }).then((res) => {
         if (liked) {
-          notify("Item removed from favorites", "success");
+          notify("Item removed from favorites");
         } else {
-          notify("Item added to favorites", "success");
+          notify("Item added to favorites");
         }
         setLiked(!liked);
       });

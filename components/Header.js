@@ -4,11 +4,10 @@ import Center from "./Center";
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "./CartContext";
 import BarsIcon from "./icons/Bars";
-import supabase from "@/lib/connSupa";
-import axios from "axios";
+import { useRouter } from 'next/router';
 
 const StyledHeader = styled.header`
-  background-color: #222;
+  background-color: ${(props) => props.bgColor};
 `;
 
 const Logo = styled(Link)`
@@ -16,6 +15,9 @@ const Logo = styled(Link)`
   text-decoration: none;
   position: relative;
   z-index: 41;
+  display: flex; 
+  align-items: center;
+  justify-content: center;
 `;
 
 const Wrapper = styled.div`
@@ -34,6 +36,7 @@ const NavLink = styled(Link)`
     display: flex;
     align-items: center;
     justify-content: center;
+    color: white;
   }
 `;
 
@@ -59,6 +62,7 @@ const StyledNav = styled.nav`
     display: flex;
     position: static;
     padding: 0;
+    background-color: ${(props) => props.bgColor};
   }
 `;
 
@@ -82,6 +86,7 @@ const StyledSvg = styled.svg`
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 50;
   @media screen and (max-width: 767px) {
     display: none;
   }
@@ -91,71 +96,31 @@ const UserText = styled.span`
   display: flex;
   color: white;
   padding: 0 10px;
+  z-index: 50;
   @media screen and (max-width: 767px) {
     display: none;
   }
 `;
 
 
-export default function Header() {
+export default function Header({ user }) {
+  const router = useRouter();
+  const [bgColor, setBgColor] = useState("#222");
   const { cartProducts } = useContext(CartContext);
   const [mobileNavActive, setMobileNavActive] = useState(false);
-  const [session, setSession] = useState(null);
-  const [user, setUser] = useState({});
-  const [calledAlready, setCalledAlready] = useState(false);
   useEffect(() => {
-    const fetchSession = async () => {
-      const session = await supabase.auth.getSession();
-      setSession(session);
-    };
-
-    fetchSession();
-  }, []);
-
-  if (
-    session &&
-    !calledAlready &&
-    session.data &&
-    session.data.session &&
-    session.data.session.user
-  ) {
-    console.log(session.data.session.user.id);
-  }
-
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      if (
-        session &&
-        session.data &&
-        session.data.session &&
-        session.data.session.user
-      ) {
-        try {
-          await axios
-            .post("/api/findByEmail", {
-              email: session.data.session.user.email,
-            })
-            .then((res) => {
-              setUser(res.data.data);
-            })
-            .catch((error) => {
-              console.error("Error in axios.post:", error);
-            });
-        } catch (error) {
-          console.error(error);
-        }
-      }
-      setCalledAlready(true);
-    };
-    fetchCurrentUser();
-  }, [session, calledAlready]);
-
+    if (router.pathname !== "/") {
+      setBgColor("#222");
+    } else {
+      setBgColor("transparent");
+    }
+  }, [router.pathname]);
   return (
-    <StyledHeader>
+    <StyledHeader bgColor={bgColor}>
       <Center>
         <Wrapper>
           <Logo href={"/"}>nineBooks</Logo>
-          <StyledNav mobileNavActive={mobileNavActive}>
+          <StyledNav mobileNavActive={mobileNavActive} bgColor={bgColor}>
             <NavLink href={"/"}>Home</NavLink>
             <NavLink href={"/products"}>All Products</NavLink>
             <NavLink href={"/categories"}>Categories</NavLink>

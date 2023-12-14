@@ -5,13 +5,13 @@ import Title from "@/components/Title";
 import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/Product";
 
-export default function ProductsPage({ products }) {
+export default function ProductsPage({ products, user }) {
     return (
         <>
-            <Header />
+            <Header user={user} />
             <Center>
                 <Title>All Products</Title>
-                <ProductsGrid products={products} />
+                <ProductsGrid products={products} user={user} />
             </Center>
         </>
     )

@@ -12,6 +12,7 @@ export default async function handler(req, res) {
         products,
         pdf,
         video,
+        audio,
         userId,
     } = req.body;
 
@@ -24,6 +25,7 @@ export default async function handler(req, res) {
         paid: false,
         products: products,
         pdf: pdf,
+        audio: audio,
         video: video,
       });
 

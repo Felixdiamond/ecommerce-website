@@ -1,124 +1,103 @@
-import { styled } from "styled-components";
-import Center from "./Center";
-import Image from "next/image";
-import CustomBtn from "./Button";
-import ButtonLink from "./ButtonLink";
-import CartIcon from "./icons/CartIcon";
-import { useContext } from "react";
-import { CartContext } from "./CartContext";
-import Notify, { notify } from "./Notification";
+import { useRef, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
 
-const Bg = styled.div`
-  background-color: #222;
-  color: #fff;
-  padding: 50px 0;
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/effect-fade";
+// import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/swiper-bundle.css";
+
+// import required modules
+import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
+import styled from "styled-components";
+
+const StyledDiv = styled.div``;
+
+const StyledImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+`;
+
+const StyledSwiper = styled(Swiper)`
+  width: 100%;
+  height: 50vh;
+  top: 0;
+  left: 0;
+  padding: 0;
+  margin: 0;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  margin-top: -12vh;
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: white;
+  }
+
+  .swiper-pagination-bullet {
+    background: white;
+  }
 `;
 
 const Title = styled.h1`
-  margin: 0;
-  font-weight: normal;
+  position: absolute;
+  color: white;
   font-size: 2rem;
-  text-align: center;
-  @media screen and (min-width: 768px) {
-    font-size: 2.5rem;
-    text-align: left;
-  }
-`;
-
-const Desc = styled.p`
-  color: #aaa;
-  font-size: 0.8rem;
-  text-align: center;
-  @media screen and (min-width: 768px) {
-    text-align: left;
-  }
-`;
-
-const ColumnsWrapper = styled.div`
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr;
-  gap: 10vw;
-  img {
-    max-width: 100%;
-    max-height: 200px;
-    display: block;
-    margin: 0 auto;
-  }
-  div:nth-child(1) {
-    order: 2;
-  }
-  @media screen and (min-width: 768px) {
-    grid-template-columns: 0.9fr 1.1fr;
-    div:nth-child(1) {
-      order: 0;
-    }
-    img {
-      max-width: 80%;
-      max-height: auto;
-    }
-  }
-`;
-
-const StyledImage = styled.img`
-  max-width: 70%;
-`;
-
-const Column = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  gap: 1.2vw;
+  margin: 0;
+  padding: 0;
   margin-top: 1rem;
-  @media screen and (max-width: 767px) {
-    align-items: center;
-    justify-content: center;
-    gap: 5vw;
-  }
+  z-index: 1000; // Increase the z-index
 `;
 
-export default function Featured({ product }) {
-  const { addProduct } = useContext(CartContext);
-  function addFeaturedToCart() {
-    addProduct(product._id);
-    notify("Item added to cart", "success")
-  }
+const Description = styled.p`
+  position: absolute;
+  color: white;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+  margin-top: 1rem;
+  z-index: 1000; // Increase the z-index
+`;
+
+
+export default function App() {
   return (
-    <Bg>
-      <Notify />
-      <Center>
-        <ColumnsWrapper>
-          <Column>
-            <div>
-              <Title>{product.title}</Title>
-              <Desc>{product.description}</Desc>
-              <ButtonWrapper>
-                <ButtonLink
-                  white={1}
-                  outline={1}
-                  size={"l"}
-                  href={`/product/${product._id}`}
-                >
-                  Read more
-                </ButtonLink>
-                <CustomBtn white={1} size={"l"} onClick={addFeaturedToCart}>
-                  <CartIcon className="w-2 h-2" />
-                  Add to cart
-                </CustomBtn>
-              </ButtonWrapper>
-            </div>
-          </Column>
-          <Column>
-            <StyledImage
-              src="https://ik.imagekit.io/choppa123/same_Q6iMEO05v?updatedAt=1698525827368"
-              alt=""
-            />
-          </Column>
-        </ColumnsWrapper>
-      </Center>
-    </Bg>
+    <>
+      <StyledDiv>
+        <StyledSwiper
+          // navigation={true}
+          effect={"fade"}
+          centeredSlides={true}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+          }}
+          pagination={{
+            dynamicBullets: true,
+            clickable: true,
+          }}
+          modules={[Autoplay, EffectFade, Navigation, Pagination]}
+          className="mySwiper"
+        >
+          <SwiperSlide>
+            {/* <StyledImage src="https://ik.imagekit.io/choppa123/wallpaperflare.com_wallpaper%20(3).jpg?updatedAt=1702324771519" /> */}
+            <StyledImage src="https://ik.imagekit.io/choppa123/Brown%20Black%20Hello%20May%20Flyer_20230924_115623_0000.jpeg.jpg?updatedAt=1702535864292" />
+          </SwiperSlide>
+          <SwiperSlide>
+            {/* <StyledImage src="https://ik.imagekit.io/choppa123/wallpaperflare.com_wallpaper%20(5).jpg?updatedAt=1702324842689" /> */}
+            <StyledImage src="https://ik.imagekit.io/choppa123/Bullet%20journal%20note%20book%20cover_20230924_120938_0000.jpeg.jpg?updatedAt=1702535864140" />
+          </SwiperSlide>
+          <SwiperSlide>
+            {/* <StyledImage src="https://ik.imagekit.io/choppa123/wp11601055-the-eminence-in-shadow-wallpapers.jpg?updatedAt=1702324843161" /> */}
+            <StyledImage src="https://ik.imagekit.io/choppa123/Bullet%20journal%20note%20book%20cover_20230924_122248_0000.jpeg.jpg?updatedAt=1702535864136" />
+          </SwiperSlide>
+          <SwiperSlide>
+            <StyledImage src="https://ik.imagekit.io/choppa123/WhatsApp%20Image%202023-12-12%20at%2007.24.44_36660efb.jpg?updatedAt=1702536060042" />
+          </SwiperSlide>
+        </StyledSwiper>
+      </StyledDiv>
+    </>
   );
 }

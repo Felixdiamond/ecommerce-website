@@ -3,9 +3,12 @@ import Center from "@/components/Center";
 import Input from "@/components/Input";
 import Notify, { notify } from "@/components/Notification";
 import Title from "@/components/Title";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { loginUser } from "@/lib/supabase";
+import Cookies from 'js-cookie';
+import CryptoJS from 'crypto-js';
+import axios from "axios";
 
 const ParentDiv = styled.div`
   display: flex;
@@ -42,6 +45,7 @@ const Label = styled.label`
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const secretKey = process.env.NEXT_PUBLIC_CRYPTO_SECRET_KEY;
 
   const logInUser = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -57,6 +61,17 @@ export default function LoginPage() {
       const sup_res = await loginUser(email, password);
       if (sup_res === "success") {
         notify("Logged in successfully", "success");
+        const user = await axios.post("/api/findByEmail", { email: email });
+
+        // Encrypt the user data
+        notify("saving cookies, please wait...")
+        const ciphertext = CryptoJS.AES.encrypt(
+          JSON.stringify(user.data.data),
+          secretKey
+        ).toString();
+
+        // Set the cookie with the encrypted user data
+        Cookies.set("user", ciphertext);
       }
       window.location.href = "/";
     } catch (error) {

@@ -3,10 +3,11 @@ import Center from "@/components/Center";
 import Title from "@/components/Title";
 import styled from "styled-components";
 import { logoutUser } from "@/lib/supabase";
-import supabase from "@/lib/connSupa";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Cookies from "js-cookie";
+import CryptoJS from "crypto-js";
 
 const ProfileWrapper = styled.div`
   margin-top: 40px;
@@ -134,14 +135,9 @@ const BoxedImg = styled.img`
   border-radius: 10px;
 `;
 
-export default function AccountsPage() {
-  const [session, setSession] = useState(null);
-  const [user, setUser] = useState({});
-  const [calledAlready, setCalledAlready] = useState(false);
+export default function AccountsPage({ user, favorites, purchaseHistory }) {
   const [myColor, setMyColor] = useState("rgb(255, 255, 255)");
   const [calledOnce, setCalledOnce] = useState(false);
-  const [favorites, setFavorites] = useState([]);
-  const [purchaseHistory, setPurchaseHistory] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -154,53 +150,6 @@ export default function AccountsPage() {
       window.removeEventListener("resize", checkMobile);
     };
   }, []);
-
-  useEffect(() => {
-    const fetchSession = async () => {
-      const session = await supabase.auth.getSession();
-      setSession(session);
-    };
-
-    fetchSession();
-  }, []);
-
-  if (
-    session &&
-    calledAlready == false &&
-    session.data &&
-    session.data.session &&
-    session.data.session.user
-  ) {
-    console.log(session.data.session.user.id);
-  }
-
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      if (
-        session &&
-        session.data &&
-        session.data.session &&
-        session.data.session.user
-      ) {
-        try {
-          await axios
-            .post("/api/findByEmail", {
-              email: session.data.session.user.email,
-            })
-            .then((res) => {
-              setUser(res.data.data);
-            })
-            .catch((error) => {
-              console.error("Error in axios.post:", error);
-            });
-        } catch (error) {
-          console.error(error);
-        }
-      }
-      setCalledAlready(true);
-    };
-    fetchCurrentUser();
-  }, [session, calledAlready]);
 
   useEffect(() => {
     const fetchImgColor = async () => {
@@ -229,56 +178,13 @@ export default function AccountsPage() {
     fetchImgColor();
   }, [user, calledOnce]);
 
-  useEffect(() => {
-    const populateFavorites = async () => {
-      if (user && user.favorites && user.favorites.length > 0) {
-        try {
-          await axios
-            .post("/api/populateFavorites", {
-              userId: user._id,
-            })
-            .then((res) => {
-              setFavorites(res.data.data.favorites);
-            })
-            .catch((error) => {
-              console.error("Error in axios.post:", error);
-            });
-        } catch (error) {
-          console.error(error);
-          throw new error();
-        }
-      }
-    };
-    populateFavorites();
-  }, [user]);
-
-  useEffect(() => {
-    const populatePurchaseHistory = async () => {
-      if (user && user.purchaseHistory && user.purchaseHistory.length > 0) {
-        try {
-          await axios
-            .post("/api/populatePurchases", {
-              userId: user._id,
-            })
-            .then((res) => {
-              setPurchaseHistory(res.data.data);
-            })
-            .catch((error) => {
-              console.error("Error in axios.post:", error);
-            });
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
-    populatePurchaseHistory();
-  }, [user]);
-
-  const renderResource = (pdf, video, productId, orderId) => {
+  const renderResource = (pdf, video, audio, productId, orderId) => {
     if (typeof pdf !== "undefined") {
       window.location = `/resource/${orderId}/${productId}?type=pdf`;
     } else if (typeof video !== "undefined") {
       window.location = `/resource/${orderId}/${productId}?type=video`;
+    } else if (typeof audio !== "undefined") {
+      window.location = `/resource/${orderId}/${productId}?type=audio`;
     } else {
       console.log("No resource found");
     }
@@ -286,7 +192,7 @@ export default function AccountsPage() {
 
   return (
     <>
-      <Header />
+      <Header user={user} />
       <Center>
         <Title>Account</Title>
         <LogoutDiv>
@@ -440,7 +346,7 @@ export default function AccountsPage() {
             <h2>Purchased Books & Videos</h2>
             {user && user.purchaseHistory && user.purchaseHistory.length > 0 ? (
               <StyledProductsGrid>
-                {purchaseHistory.map((purchase) => (
+                {purchaseHistory?.map((purchase) => (
                   <>
                     <div>
                       <WhiteBox
@@ -449,6 +355,7 @@ export default function AccountsPage() {
                           renderResource(
                             purchase.pdf,
                             purchase.video,
+                            purchase.audio,
                             purchase.productId,
                             purchase.orderId
                           )
@@ -473,4 +380,58 @@ export default function AccountsPage() {
       </Center>
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  const ciphertext = context.req.cookies.user;
+  var favorites = null;
+  var purchaseHistory = null;
+  const secretKey = process.env.NEXT_PUBLIC_CRYPTO_SECRET_KEY;
+  const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
+  const user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+  console.log("user ", user._id);
+
+  console.log("favs array ", user.favorites)
+
+  if (user.favorites.length > 0) {
+    try {
+      await axios
+        .post("/api/populateFavorites", {
+          userId: user._id,
+        })
+        .then((res) => {
+          favorites = res.data.data.favorites;
+        })
+        .catch((error) => {
+          console.error("Error in axios.post:", error);
+        });
+    } catch (error) {
+      console.error(error);
+      throw new error();
+    }
+  }
+
+  if (user.purchaseHistory.length > 0) {
+    try {
+      await axios
+        .post("/api/populatePurchases", {
+          userId: user._id,
+        })
+        .then((res) => {
+          purchaseHistory = res.data.data;
+        })
+        .catch((error) => {
+          console.error("Error in axios.post:", error);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return {
+    props: {
+      favorites: favorites,
+      purchaseHistory: purchaseHistory,
+    },
+  };
 }

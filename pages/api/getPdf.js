@@ -3,10 +3,15 @@ import fetch from "node-fetch";
 export default async function handler(req, res) {
   const { url } = req.query;
 
+  if (url.endsWith(".pdf") === false) {
+    return res.status(400).end();
+  }
+
   try {
     const response = await fetch(url);
 
     if (!response.ok) {
+      console.error(response);
       return res.status(response.status).end();
     }
 
