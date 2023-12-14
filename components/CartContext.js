@@ -1,4 +1,5 @@
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+const { createContext } = require("react");
 
 export const CartContext = createContext({});
 
