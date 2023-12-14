@@ -46,6 +46,16 @@ export const ButtonStyle = css`
       color: #fff;
       margin-top: 1rem;
     `}
+    ${(props) =>
+    props.black &&
+    props.block &&
+    props.disabled &&
+    css`
+      background-color: grey;
+      color: #fff;
+      margin-top: 1rem;
+      pointer-events: none;
+    `}
   ${(props) =>
     props.black &&
     props.outline &&

@@ -50,10 +50,11 @@ const LittleText = styled.p`
   color: grey;
   left: 50%;
   transform: translateX(-50%);
-  a {
-    color: #000;
-    text-decoration: none;
-  }
+`;
+
+const LinkBtn = styled.span`
+  color: #000;
+  cursor: pointer;
 `;
 
 export default function LoginPage() {
@@ -61,6 +62,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const secretKey = process.env.NEXT_PUBLIC_CRYPTO_SECRET_KEY;
 
   const logInUser = async () => {
@@ -90,8 +92,8 @@ export default function LoginPage() {
 
         // Set the cookie with the encrypted user data
         Cookies.set("user", ciphertext);
+        router.push("/");
       }
-      router.push("/");
     } catch (error) {
       notify(`${error}`, "error");
     }
@@ -119,7 +121,7 @@ export default function LoginPage() {
             />
 
             {loading ? (
-              <CustomBtn block={1} black={1} disabled>
+              <CustomBtn block={1} black={1} disabled={1}>
                 Please wait...
               </CustomBtn>
             ) : (
@@ -130,7 +132,16 @@ export default function LoginPage() {
 
             <LittleText>
               Don&apos;t have an account?&nbsp;
-              <Link href="/register">Register</Link>
+              <LinkBtn
+                onClick={() => {
+                  if (!isNavigating) {
+                    setIsNavigating(true);
+                    router.push("/register").then(() => setIsNavigating(false));
+                  }
+                }}
+              >
+                Sign up
+              </LinkBtn>
             </LittleText>
           </LoginBox>
         </ParentDiv>

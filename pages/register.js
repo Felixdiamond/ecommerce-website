@@ -114,10 +114,11 @@ const LittleText = styled.p`
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
-  a {
-    color: #000;
-    text-decoration: none;
-  }
+`;
+
+const LinkBtn = styled.span`
+  color: #000;
+  cursor: pointer;
 `;
 
 export default function RegisterPage() {
@@ -349,7 +350,7 @@ export default function RegisterPage() {
             />
 
             {loading ? (
-              <CustomBtn block={1} black={1} disabled>
+              <CustomBtn block={1} black={1} disabled={1}>
                 Please wait...
               </CustomBtn>
             ) : (
@@ -360,7 +361,13 @@ export default function RegisterPage() {
 
             <LittleText>
               Already have an account?&nbsp;
-              <Link href="/login">Login</Link>
+              <LinkBtn
+                onClick={() => {
+                  router.push("/login");
+                }}
+              >
+                Login
+              </LinkBtn>
             </LittleText>
           </LoginBox>
         </ParentDiv>
