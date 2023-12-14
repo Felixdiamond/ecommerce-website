@@ -9,7 +9,6 @@ import axios from "axios";
 import { registerUser } from "@/lib/supabase";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { set } from "mongoose";
 
 const ParentDiv = styled.div`
   display: flex;
@@ -230,6 +229,7 @@ export default function RegisterPage() {
             if (sup_res === "success") {
               notify("User created successfully", "success");
               setLoading(false);
+              router.push("/");
             } else {
               notify("Error creating user", "error");
               return;
