@@ -396,7 +396,7 @@ export async function getServerSideProps(context) {
   if (user.favorites.length > 0) {
     try {
       await axios
-        .post("/api/populateFavorites", {
+        .post("https://silly-pastelito-61e80b.netlify.app/api/populateFavorites", {
           userId: user._id,
         })
         .then((res) => {
@@ -414,7 +414,7 @@ export async function getServerSideProps(context) {
   if (user.purchaseHistory.length > 0) {
     try {
       await axios
-        .post("/api/populatePurchases", {
+        .post("https://silly-pastelito-61e80b.netlify.app/api/populatePurchases", {
           userId: user._id,
         })
         .then((res) => {
