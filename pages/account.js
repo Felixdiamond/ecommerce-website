@@ -316,7 +316,7 @@ export default function AccountsPage({ user, favorites, purchaseHistory }) {
             </FavTit>
             {user && user.favorites && user.favorites.length > 0 ? (
               <StyledProductsGrid>
-                {favorites.map((fav) => (
+                {favorites?.map((fav) => (
                   <>
                     <div>
                       <StyledLink
