@@ -9,6 +9,7 @@ import { loginUser } from "@/lib/supabase";
 import Cookies from 'js-cookie';
 import CryptoJS from 'crypto-js';
 import axios from "axios";
+import Link from "next/link";
 
 const ParentDiv = styled.div`
   display: flex;
@@ -24,7 +25,7 @@ const LoginBox = styled.div`
   background-color: #fff;
   border-radius: 10px;
   padding: 30px;
-  padding-bottom: 40px;
+  padding-bottom: 45px;
   text-align: center;
   @media screen and (max-width: 767px) {
     width: 90%;
@@ -40,6 +41,19 @@ const Label = styled.label`
   align-items: center;
   justify-content: left;
   box-sizing: border-box;
+`;
+
+const LittleText = styled.p`
+  font-size: 0.8rem;
+  position: absolute;
+  color: grey;
+  left: 50%;
+  transform: translateX(-50%);
+  a {
+    color: #000;
+    text-decoration: none;
+
+  }
 `;
 
 export default function LoginPage() {
@@ -103,6 +117,11 @@ export default function LoginPage() {
             <CustomBtn block={1} black={1} onClick={logInUser}>
               Login
             </CustomBtn>
+
+            <LittleText>
+              Don&apos;t have an account?&nbsp;
+              <Link href="/register">Register</Link>
+            </LittleText>
           </LoginBox>
         </ParentDiv>
       </Center>

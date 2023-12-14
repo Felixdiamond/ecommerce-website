@@ -7,6 +7,7 @@ import CustomBtn from "@/components/Button";
 import Notify, { notify } from "@/components/Notification";
 import axios from "axios";
 import { registerUser } from "@/lib/supabase";
+import Link from "next/link";
 
 const ParentDiv = styled.div`
   display: flex;
@@ -22,7 +23,7 @@ const LoginBox = styled.div`
   background-color: #fff;
   border-radius: 10px;
   padding: 30px;
-  padding-bottom: 40px;
+  padding-bottom: 45px;
   text-align: center;
   @media screen and (max-width: 767px) {
     max-width: 90%;
@@ -103,6 +104,19 @@ const StyledInputPass = styled.input`
   width: 90%;
   border: none;
   outline: none;
+`;
+
+const LittleText = styled.p`
+  font-size: 0.8rem;
+  position: absolute;
+  color: grey;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  a {
+    color: #000;
+    text-decoration: none;
+  }
 `;
 
 export default function RegisterPage() {
@@ -335,6 +349,11 @@ export default function RegisterPage() {
             <CustomBtn block={1} black={1} onClick={createUser}>
               Sign Up
             </CustomBtn>
+
+            <LittleText>
+              Already have an account?&nbsp;
+              <Link href="/login">Login</Link>
+            </LittleText>
           </LoginBox>
         </ParentDiv>
       </Center>
