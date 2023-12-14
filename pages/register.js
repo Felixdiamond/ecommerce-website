@@ -8,6 +8,8 @@ import Notify, { notify } from "@/components/Notification";
 import axios from "axios";
 import { registerUser } from "@/lib/supabase";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { set } from "mongoose";
 
 const ParentDiv = styled.div`
   display: flex;
@@ -120,6 +122,7 @@ const LittleText = styled.p`
 `;
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -129,6 +132,7 @@ export default function RegisterPage() {
   const [image, setImage] = useState("");
   const [fileName, setFileName] = useState("No file chosen");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (e) => {
     setImage(e.target.files[0]);
@@ -173,6 +177,7 @@ export default function RegisterPage() {
     }
     if (!image) {
       try {
+        setLoading(true);
         const response = await axios.post("/api/register", {
           firstName,
           lastName,
@@ -198,8 +203,6 @@ export default function RegisterPage() {
           notify("Error saving information", "error");
           return;
         }
-
-        window.location = "/login";
         console.log(response);
       } catch (err) {
         notify("Error creating user", "error");
@@ -226,6 +229,7 @@ export default function RegisterPage() {
             const sup_res = await registerUser(email, password);
             if (sup_res === "success") {
               notify("User created successfully", "success");
+              setLoading(false);
             } else {
               notify("Error creating user", "error");
               return;
@@ -346,9 +350,15 @@ export default function RegisterPage() {
               onChange={(e) => setAddress(e.target.value)}
             />
 
-            <CustomBtn block={1} black={1} onClick={createUser}>
-              Sign Up
-            </CustomBtn>
+            {loading ? (
+              <CustomBtn block={1} black={1} disabled>
+                Please wait...
+              </CustomBtn>
+            ) : (
+              <CustomBtn block={1} black={1} onClick={createUser}>
+                Sign Up
+              </CustomBtn>
+            )}
 
             <LittleText>
               Already have an account?&nbsp;

@@ -384,6 +384,14 @@ export default function AccountsPage({ user, favorites, purchaseHistory }) {
 
 export async function getServerSideProps(context) {
   const ciphertext = context.req.cookies.user;
+  if (!ciphertext) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
   var favorites = null;
   var purchaseHistory = null;
   const secretKey = process.env.NEXT_PUBLIC_CRYPTO_SECRET_KEY;

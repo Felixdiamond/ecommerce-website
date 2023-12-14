@@ -6,10 +6,11 @@ import Title from "@/components/Title";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { loginUser } from "@/lib/supabase";
-import Cookies from 'js-cookie';
-import CryptoJS from 'crypto-js';
+import Cookies from "js-cookie";
+import CryptoJS from "crypto-js";
 import axios from "axios";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const ParentDiv = styled.div`
   display: flex;
@@ -52,13 +53,14 @@ const LittleText = styled.p`
   a {
     color: #000;
     text-decoration: none;
-
   }
 `;
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const secretKey = process.env.NEXT_PUBLIC_CRYPTO_SECRET_KEY;
 
   const logInUser = async () => {
@@ -72,13 +74,15 @@ export default function LoginPage() {
       return;
     }
     try {
+      setLoading(true);
       const sup_res = await loginUser(email, password);
       if (sup_res === "success") {
         notify("Logged in successfully", "success");
+        setLoading(false);
         const user = await axios.post("/api/findByEmail", { email: email });
 
         // Encrypt the user data
-        notify("saving cookies, please wait...")
+        notify("saving cookies, please wait...");
         const ciphertext = CryptoJS.AES.encrypt(
           JSON.stringify(user.data.data),
           secretKey
@@ -87,7 +91,7 @@ export default function LoginPage() {
         // Set the cookie with the encrypted user data
         Cookies.set("user", ciphertext);
       }
-      window.location.href = "/";
+      router.push("/");
     } catch (error) {
       notify(`${error}`, "error");
     }
@@ -114,9 +118,15 @@ export default function LoginPage() {
               type="password"
             />
 
-            <CustomBtn block={1} black={1} onClick={logInUser}>
-              Login
-            </CustomBtn>
+            {loading ? (
+              <CustomBtn block={1} black={1} disabled>
+                Please wait...
+              </CustomBtn>
+            ) : (
+              <CustomBtn block={1} black={1} onClick={logInUser}>
+                Login
+              </CustomBtn>
+            )}
 
             <LittleText>
               Don&apos;t have an account?&nbsp;
