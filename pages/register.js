@@ -239,8 +239,6 @@ export default function RegisterPage() {
             notify("Error saving information", "error");
             return;
           }
-          window.location = "/login";
-          console.log(response);
         } else {
           console.error("Image upload failed");
         }
