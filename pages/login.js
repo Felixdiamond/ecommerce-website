@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
 import axios from "axios";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
 
 const ParentDiv = styled.div`
@@ -57,6 +58,25 @@ const LinkBtn = styled.span`
   cursor: pointer;
 `;
 
+const Loader = styled(Loader2)`
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  animation: spin 1s linear infinite;
+`;
+
+const LoadBtnDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+`;
+
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -96,6 +116,7 @@ export default function LoginPage() {
       }
     } catch (error) {
       notify(`${error}`, "error");
+      setLoading(false);
     }
   };
 
@@ -122,7 +143,10 @@ export default function LoginPage() {
 
             {loading ? (
               <CustomBtn block={1} black={1} disabled={1}>
-                Please wait...
+                <LoadBtnDiv>
+                  Please wait
+                  <Loader />
+                </LoadBtnDiv>
               </CustomBtn>
             ) : (
               <CustomBtn block={1} black={1} onClick={logInUser}>

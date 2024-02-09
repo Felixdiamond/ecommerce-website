@@ -8,7 +8,9 @@ import Notify, { notify } from "@/components/Notification";
 import axios from "axios";
 import { registerUser } from "@/lib/supabase";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
+import { set } from "mongoose";
 
 const ParentDiv = styled.div`
   display: flex;
@@ -121,6 +123,25 @@ const LinkBtn = styled.span`
   cursor: pointer;
 `;
 
+const Loader = styled(Loader2)`
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  animation: spin 1s linear infinite;
+`;
+
+const LoadBtnDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+`;
+
 export default function RegisterPage() {
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
@@ -155,100 +176,83 @@ export default function RegisterPage() {
 
   const createUser = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !phoneNumber ||
-      !password ||
-      !address
-    ) {
+  
+    // Validate input fields
+    if (!firstName || !lastName || !email || !phoneNumber || !password || !address) {
       notify("Please fill all fields", "error");
       return;
-    } else if (!emailRegex.test(email)) {
+    }
+  
+    if (!emailRegex.test(email)) {
       notify("Invalid email format", "error");
       setEmail("");
       return;
-    } else if (password.length < 6) {
+    }
+  
+    if (password.length < 6) {
       notify("Password must be at least 6 characters long", "error");
       setPassword("");
       return;
     }
-    if (!image) {
+  
+    // Prepare user data
+    const userData = {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      password,
+      address,
+    };
+  
+    // If image exists, upload it and add the link to user data
+    if (image) {
       try {
         setLoading(true);
-        const response = await axios.post("/api/register", {
-          firstName,
-          lastName,
-          email,
-          phoneNumber,
-          password,
-          address,
-        });
-        notify(
-          "User registered successfully. Saving information...",
-          "success"
-        );
-        try {
-          const sup_res = await registerUser(email, password);
-          if (sup_res === "success") {
-            notify("User created successfully", "success");
-          } else {
-            notify("Error creating user", "error");
-            return;
-          }
-        } catch (error) {
-          console.error(error);
-          notify("Error saving information", "error");
+        const realImage = await uploadImages(image);
+        if (!realImage) {
+          setLoading(false);
+          notify("Error uploading image", "error");
           return;
         }
-        console.log(response);
-      } catch (err) {
-        notify("Error creating user", "error");
-        console.error("Error creating user:", err);
-      }
-    } else {
-      try {
-        const realImage = await uploadImages(image);
-        if (realImage) {
-          const response = await axios.post("/api/register", {
-            firstName,
-            lastName,
-            email,
-            phoneNumber,
-            password,
-            address,
-            image: realImage.links[0],
-          });
-          notify(
-            "User registered successfully. Saving information...",
-            "success"
-          );
-          try {
-            const sup_res = await registerUser(email, password);
-            if (sup_res === "success") {
-              notify("User created successfully", "success");
-              setLoading(false);
-              router.push("/");
-            } else {
-              notify("Error creating user", "error");
-              return;
-            }
-          } catch (error) {
-            console.error(error);
-            notify("Error saving information", "error");
-            return;
-          }
-        } else {
-          console.error("Image upload failed");
-        }
-      } catch (err) {
-        notify("Error creating user", "error");
-        console.error("Error creating user:", err);
+        userData.image = realImage.links[0];
+      } catch (error) {
+        console.error("Image upload failed:", error);
+        notify("Error uploading image", "error");
+        setLoading(false);
+        return;
       }
     }
-  };
+  
+    // Register user
+    try {
+      setLoading(true);
+      const response = await axios.post("/api/register", userData);
+      console.log(response);
+      notify("User registered successfully. Saving information...", "success");
+    } catch (error) {
+      console.error("Error creating user:", error);
+      notify("Error creating user", "error");
+      setLoading(false);
+      return;
+    }
+  
+    // Save user information
+    try {
+      const sup_res = await registerUser(email, password);
+      if (sup_res === "success") {
+        notify("User created successfully", "success");
+        router.push("/login");
+      } else {
+        throw new Error("Error saving information");
+      }
+    } catch (error) {
+      console.error(error);
+      notify("Error saving information", "error");
+    } finally {
+      setLoading(false);
+    }
+  };  
 
   return (
     <>
@@ -351,8 +355,11 @@ export default function RegisterPage() {
 
             {loading ? (
               <CustomBtn block={1} black={1} disabled={1}>
-                Please wait...
-              </CustomBtn>
+              <LoadBtnDiv>
+                Please wait
+                <Loader />
+              </LoadBtnDiv>
+            </CustomBtn>
             ) : (
               <CustomBtn block={1} black={1} onClick={createUser}>
                 Sign Up
