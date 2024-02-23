@@ -75,7 +75,7 @@ export default function Heartify({ productId, userId, userFavs }) {
     } catch (err) {
       console.error(err);
       notify("Error updating favorites", "error");
-      setLiked(!liked)
+      setLiked(false);
     }
   };
 
