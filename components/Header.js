@@ -40,6 +40,23 @@ const NavLink = styled(Link)`
   }
 `;
 
+const TestLink = styled.span`
+  display: block;
+  color: #aaa;
+  text-decoration: none;
+  padding: 10px 0;
+  @media screen and (min-width: 768px) {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+  :hover {
+    cursor: pointer !important;
+  }
+`;
+
 const StyledNav = styled.nav`
   ${(props) =>
     props.mobileNavActive
@@ -121,17 +138,27 @@ export default function Header({ user }) {
         <Wrapper>
           <Logo href={"/"}>nineBooks</Logo>
           <StyledNav mobileNavActive={mobileNavActive} bgColor={bgColor}>
-            <NavLink href={"/"}>Home</NavLink>
-            <NavLink href={"/products"}>All Products</NavLink>
-            <NavLink href={"/categories"}>Categories</NavLink>
-            <NavLink href={"/cart"}>Cart ({cartProducts.length})</NavLink>
+            <TestLink onClick={() => {
+              window.location.href = "/";
+            }}>Home</TestLink>
+            <TestLink onClick={() => {
+              window.location.href = "/products";
+            }}>All Products</TestLink>
+            <TestLink onClick={() => {
+              window.location.href = "/categories";
+            }}>Categories</TestLink>
+            <TestLink onClick={() => {
+              window.location.href = "/cart";
+            }}>Cart ({cartProducts.length})</TestLink>
             {mobileNavActive && (
-              <NavLink href={"/account"}>
+              <TestLink onClick={() => {
+                window.location.href = "/account";
+              }}>
                   Account ({user && user.name ? user.name.split(" ")[0] : "Guest"})
-              </NavLink>
+              </TestLink>
             )}
           </StyledNav>
-          <NavLink href={"/account"}>
+          <TestLink>
             <StyledSvg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -146,10 +173,12 @@ export default function Header({ user }) {
                 d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </StyledSvg>
-            <UserText>
+            <UserText onClick={() => {
+              window.location.href = "/account";
+            }}>
               {user && user.name ? user.name.split(" ")[0] : "Guest"}
             </UserText>
-          </NavLink>
+          </TestLink>
 
           <NavButton onClick={() => setMobileNavActive((prev) => !prev)}>
             <BarsIcon />

@@ -64,17 +64,18 @@ export default function Heartify({ productId, userId, userFavs }) {
   const handleLike = async (e) => {
     e.preventDefault();
     try {
+      setLiked(!liked);
       await axios.post("/api/favorites", { productId, userId }).then((res) => {
         if (liked) {
           notify("Item removed from favorites");
         } else {
           notify("Item added to favorites");
         }
-        setLiked(!liked);
       });
     } catch (err) {
       console.error(err);
       notify("Error updating favorites", "error");
+      setLiked(!liked)
     }
   };
 

@@ -93,11 +93,6 @@ const PriceDiv = styled.div`
     padding-bottom: 0.5rem;
   }
 `;
-
-const RoundThis = styled.div`
-
-`;
-
 const BoxedImg = styled.img`
   max-width: 100%;
   max-height: auto;
@@ -112,11 +107,10 @@ export default function ProductBox({
   images,
   user,
   userFavs,
+  color
 }) {
   const { addProduct } = useContext(CartContext);
-  const [calledOnce, setCalledOnce] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [myColor, setMyColor] = useState("rgb(255, 255, 255)");
   const uri = `/product/${_id}`;
 
   useEffect(() => {
@@ -130,44 +124,15 @@ export default function ProductBox({
     };
   }, []);
 
-  useEffect(() => {
-    const fetchImgColor = async () => {
-      if (images && calledOnce == false) {
-        try {
-          await axios
-            .post("/api/grabColor", {
-              image: images[0],
-              primary: "true",
-              secondary: "false",
-            })
-            .then((res) => {
-              const rgbArray = res.data.color;
-              const rgbString = `rgb(${rgbArray.join(", ")})`;
-              setMyColor(rgbString);
-            })
-            .catch((error) => {
-              console.error("Error in axios.post:", error);
-            });
-        } catch (error) {
-          console.error(error);
-        }
-        setCalledOnce(true);
-      }
-    };
-    fetchImgColor();
-  }, [images, calledOnce]);
-
   return (
     <ProductWrapper>
       <Notify />
-      <WhiteBox href={uri} myColor={myColor}>
+      <WhiteBox href={uri} myColor={color}>
         <DiscountLabel>
           -{(((price - discountPrice) / price) * 100).toFixed(0)}%
         </DiscountLabel>
         <Heartify productId={_id} userId={user?._id} userFavs={userFavs} />
-        <RoundThis>
           <BoxedImg src={images?.[0]} alt="" />
-        </RoundThis>
       </WhiteBox>
       <ProductInfoBox>
         <Title href={uri}>{title}</Title>
