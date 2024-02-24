@@ -11,6 +11,7 @@ import { Product } from "@/models/Product";
 import { useContext } from "react";
 import { Category } from "@/models/Category";
 import styled from "styled-components";
+import Notify, { notify } from "@/components/Notification";
 
 const ColWrapper = styled.div`
   display: grid;
@@ -88,6 +89,7 @@ export default function ProductPage({ product }) {
   const { addProduct } = useContext(CartContext);
   return (
     <>
+      <Notify />
       <Header />
       <Center>
         <ColWrapper>
@@ -100,16 +102,19 @@ export default function ProductPage({ product }) {
             <YahariWhiteBox>
               <Title>{product.title}</Title>
               <p>{product.description}</p>
-              <PropertiesDiv>
-                <h2>Properties</h2>
-                <div>
-                  {product.category.properties.map((property) => (
-                    <Property key={property.name}>
-                      {property.name}: {property.values[0]}
-                    </Property>
-                  ))}
-                </div>
-              </PropertiesDiv>
+              {product.category.properties.length > 0 && (
+                <PropertiesDiv>
+                  <h2>Properties</h2>
+                  <div>
+                    {product.category.properties.map((property) => (
+                      <Property key={property.name}>
+                        {property.name}: {property.values[0]}
+                      </Property>
+                    ))}
+                  </div>
+                </PropertiesDiv>
+              )}
+
               <PriceRow>
                 <BlackDivider />
                 <InnerPriceRow>
@@ -124,7 +129,10 @@ export default function ProductPage({ product }) {
                   <CustomBtn
                     primary={1}
                     block={1}
-                    onClick={() => addProduct(product._id)}
+                    onClick={() => {
+                      addProduct(product._id);
+                      notify("Added to cart", "success");
+                    }}
                   >
                     <CartIcon />
                     Add to cart

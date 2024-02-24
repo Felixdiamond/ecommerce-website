@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
+import useIsMobile from "@/components/useIsMobile";
 
 const ProfileWrapper = styled.div`
   margin-top: 40px;
@@ -135,21 +136,9 @@ const BoxedImg = styled.img`
   border-radius: 10px;
 `;
 
-export default function AccountsPage({ user, favorites, purchaseHistory }) {
-  const [myColor, setMyColor] = useState("rgb(255, 255, 255)");
+export default function AccountsPage({ user, favorites, purchaseHistory, myColor }) {
   const [calledOnce, setCalledOnce] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 767);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => {
-      window.removeEventListener("resize", checkMobile);
-    };
-  }, []);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchImgColor = async () => {
@@ -392,54 +381,50 @@ export async function getServerSideProps(context) {
       },
     };
   }
-  var favorites = null;
-  var purchaseHistory = null;
+
   const secretKey = process.env.NEXT_PUBLIC_CRYPTO_SECRET_KEY;
   const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
   const user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-  console.log("user ", user._id);
 
-  console.log("favs array ", user.favorites)
+  let favorites = null;
+  let purchaseHistory = null;
+  let myColor = null;
 
-  if (user.favorites.length > 0) {
-    try {
-      await axios
-        .post("https://silly-pastelito-61e80b.netlify.app/api/populateFavorites", {
-          userId: user._id,
-        })
-        .then((res) => {
-          favorites = res.data.data.favorites;
-        })
-        .catch((error) => {
-          console.error("Error in axios.post:", error);
-        });
-    } catch (error) {
-      console.error(error);
-      throw new error();
+  try {
+    if (user.favorites.length > 0) {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/populateFavorites`, {
+        userId: user._id,
+      });
+      favorites = res.data.data.favorites;
     }
-  }
 
-  if (user.purchaseHistory.length > 0) {
-    try {
-      await axios
-        .post("https://silly-pastelito-61e80b.netlify.app/api/populatePurchases", {
-          userId: user._id,
-        })
-        .then((res) => {
-          purchaseHistory = res.data.data;
-        })
-        .catch((error) => {
-          console.error("Error in axios.post:", error);
-        });
-    } catch (error) {
-      console.error(error);
+    if (user.purchaseHistory.length > 0) {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/populatePurchases`, {
+        userId: user._id,
+      });
+      purchaseHistory = res.data.data;
     }
+
+    if (user && user.image) {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/grabColor`, {
+        image: user.image,
+        primary: "false",
+        secondary: "true",
+      });
+      const rgbArray = res.data.color[1];
+      const rgbString = `rgb(${rgbArray.join(", ")})`;
+      myColor = rgbString;
+    }
+  } catch (error) {
+    console.error(error);
+    // Handle or rethrow error
   }
 
   return {
     props: {
       favorites: favorites,
       purchaseHistory: purchaseHistory,
+      myColor: myColor,
     },
   };
 }

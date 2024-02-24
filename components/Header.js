@@ -154,7 +154,7 @@ export default function Header({ user }) {
               <TestLink onClick={() => {
                 window.location.href = "/account";
               }}>
-                  Account ({user && user.name ? user.name.split(" ")[0] : "Guest"})
+                  Account - {user && user.name ? user.name.split(" ")[0] : "Guest"}
               </TestLink>
             )}
           </StyledNav>

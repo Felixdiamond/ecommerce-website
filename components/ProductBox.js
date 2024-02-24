@@ -29,7 +29,7 @@ const Linkk = styled(Link)`
   text-decoration: none;
 `;
 
-const WhiteBox = styled(Linkk)`
+const WhiteBox = styled.div`
   position: relative;
   background-color: ${(props) => props.myColor};
   padding: 20px;
@@ -43,6 +43,9 @@ const WhiteBox = styled(Linkk)`
   img {
     max-width: 100%;
     max-height: 8rem;
+  }
+  :hover {
+    cursor: pointer;
   }
 `;
 
@@ -127,7 +130,9 @@ export default function ProductBox({
   return (
     <ProductWrapper>
       <Notify />
-      <WhiteBox href={uri} myColor={color}>
+      <WhiteBox onClick={() => {
+        window.location.href = uri;
+      }} myColor={color}>
         <DiscountLabel>
           -{(((price - discountPrice) / price) * 100).toFixed(0)}%
         </DiscountLabel>

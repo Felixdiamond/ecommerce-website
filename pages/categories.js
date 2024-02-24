@@ -39,14 +39,14 @@ export default function Categories({ products, user }) {
           const categoryName = groupedProducts[catId][0].category.name;
 
           return (
-            <>
+            <div key={categoryName}>
               <StyledHeader>{categoryName}</StyledHeader>
               
               <ProductsGrid 
                 products={groupedProducts[catId]}
                 user={user}
               />
-            </>  
+            </div>  
           )
         })}
 
