@@ -15,8 +15,6 @@
     "@vidstack/react": "^1.8.3",
     "axios": "^1.6.7",
     "bcrypt": "^5.1.1",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.0",
     "colorthief": "^2.4.0",
     "cookie": "^0.6.0",
     "cors": "^2.8.5",
@@ -47,7 +45,6 @@
     "stripe": "^14.4.0",
     "styled-components": "^6.1.0",
     "swiper": "^11.0.5",
-    "vaul": "^0.9.0",
     "vidstack": "^0.6.14"
   },
   "devDependencies": {

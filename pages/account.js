@@ -283,17 +283,17 @@ export default function AccountsPage({ user, favorites, purchaseHistory, myColor
                 />
               </StyledSvg>
             </FavTit>
-            {favorites && favorites.length > 0 ? (
+            {user && user.favorites && favorites && favorites.length > 0 ? (
               <StyledProductsGrid>
-                {favorites?.map((fav, index) => (
-                    <div key={index}>
+                {favorites?.map((fav) => (
+                    <div key={fav.title}>
                       <StyledLink
                         href={{
                           pathname: "/product/[id]",
                           query: { id: fav._id },
                         }}
                       >
-                        <WhiteBox key={fav.title}>
+                        <WhiteBox>
                           <p>
                             <div>
                               <BoxedImg src={fav.images[0]} />
@@ -311,12 +311,11 @@ export default function AccountsPage({ user, favorites, purchaseHistory, myColor
           </ZaBox>
           <ZaBox>
             <h2>Purchased Books & Videos</h2>
-            {purchaseHistory && purchaseHistory.length > 0 ? (
+            {user && user.purchaseHistory && purchaseHistory && purchaseHistory.length > 0 ? (
               <StyledProductsGrid>
-                {purchaseHistory?.map((purchase, index) => (
-                    <div key={index}>
+                {purchaseHistory?.map((purchase) => (
+                    <div key={purchase.productId}>
                       <WhiteBox
-                        key={purchase.productId}
                         onClick={() =>
                           renderResource(
                             purchase.pdf,
