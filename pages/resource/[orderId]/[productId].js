@@ -139,13 +139,14 @@ export default function ResourcePage({ user, resource, type, productName }) {
         {resource && type == "pdf" ? (
           <>
               <StyledDocument
+                {...handlers}
                 file={pdfFile}
                 onLoadSuccess={onDocumentLoadSuccess}
                 onContextMenu={(e) => e.preventDefault()}
                 loading={<CustomLoading />}
-                {...handlers}
               >
                 <StyledPage
+                  {...handlers}
                   pageNumber={pageNumber}
                   renderTextLayer={false}
                   renderAnnotationLayer={false}
