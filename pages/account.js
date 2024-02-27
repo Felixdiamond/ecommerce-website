@@ -136,36 +136,16 @@ const BoxedImg = styled.img`
   border-radius: 10px;
 `;
 
-export default function AccountsPage({ user, favorites, purchaseHistory, myColor }) {
-  const [calledOnce, setCalledOnce] = useState(false);
-  const isMobile = useIsMobile();
+const SupportP = styled.div`
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  text-decoration: none;
+  /* color: blue; */
+`;
 
-  useEffect(() => {
-    const fetchImgColor = async () => {
-      if (user && user.image && calledOnce == false) {
-        try {
-          await axios
-            .post("/api/grabColor", {
-              image: user.image,
-              primary: "false",
-              secondary: "true",
-            })
-            .then((res) => {
-              const rgbArray = res.data.color[1];
-              const rgbString = `rgb(${rgbArray.join(", ")})`;
-              setMyColor(rgbString);
-            })
-            .catch((error) => {
-              console.error("Error in axios.post:", error);
-            });
-        } catch (error) {
-          console.error(error);
-        }
-        setCalledOnce(true);
-      }
-    };
-    fetchImgColor();
-  }, [user, calledOnce]);
+export default function AccountsPage({ user, favorites, purchaseHistory, myColor }) {
+  const isMobile = useIsMobile();
 
   const renderResource = (pdf, video, audio, productId, orderId) => {
     if (typeof pdf !== "undefined") {
@@ -303,18 +283,17 @@ export default function AccountsPage({ user, favorites, purchaseHistory, myColor
                 />
               </StyledSvg>
             </FavTit>
-            {user && user.favorites && user.favorites.length > 0 ? (
+            {user && user.favorites && favorites && favorites.length > 0 ? (
               <StyledProductsGrid>
                 {favorites?.map((fav) => (
-                  <>
-                    <div>
+                    <div key={fav.title}>
                       <StyledLink
                         href={{
                           pathname: "/product/[id]",
                           query: { id: fav._id },
                         }}
                       >
-                        <WhiteBox key={fav.title}>
+                        <WhiteBox>
                           <p>
                             <div>
                               <BoxedImg src={fav.images[0]} />
@@ -324,7 +303,6 @@ export default function AccountsPage({ user, favorites, purchaseHistory, myColor
                       </StyledLink>
                       <StyledText>{fav.title}</StyledText>
                     </div>
-                  </>
                 ))}
               </StyledProductsGrid>
             ) : (
@@ -333,13 +311,11 @@ export default function AccountsPage({ user, favorites, purchaseHistory, myColor
           </ZaBox>
           <ZaBox>
             <h2>Purchased Books & Videos</h2>
-            {user && user.purchaseHistory && user.purchaseHistory.length > 0 ? (
+            {user && user.purchaseHistory && purchaseHistory && purchaseHistory.length > 0 ? (
               <StyledProductsGrid>
                 {purchaseHistory?.map((purchase) => (
-                  <>
-                    <div>
+                    <div key={purchase.productId}>
                       <WhiteBox
-                        key={purchase.productId}
                         onClick={() =>
                           renderResource(
                             purchase.pdf,
@@ -358,7 +334,6 @@ export default function AccountsPage({ user, favorites, purchaseHistory, myColor
                       </WhiteBox>
                       <StyledText>{purchase.name}</StyledText>
                     </div>
-                  </>
                 ))}
               </StyledProductsGrid>
             ) : (
@@ -366,6 +341,11 @@ export default function AccountsPage({ user, favorites, purchaseHistory, myColor
             )}
           </ZaBox>
         </ProfileWrapper>
+        <SupportP>
+          <a href="mailto:diamondfelix006@gmail.com">
+          Contact Support
+          </a>
+        </SupportP>
       </Center>
     </>
   );

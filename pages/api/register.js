@@ -1,6 +1,6 @@
 import { mongooseConnect } from "@/lib/mongoose";
 import { Person } from "@/models/Person";
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 export default async function handle(req, res) {
     mongooseConnect();
