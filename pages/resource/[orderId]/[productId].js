@@ -17,6 +17,7 @@ import styled from "styled-components";
 import CustomLoading from "@/components/CustomLoading";
 import cookie from "cookie";
 import CryptoJS from "crypto-js";
+import { useSwipeable } from "react-swipeable";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -109,19 +110,24 @@ export default function ResourcePage({ user, resource, type, productName }) {
   const getPdf = useCallback(() => {
     // Extract filename from URL
     const url = resource;
-    const name = url.substring(url.lastIndexOf('/')+1);
-  
-    fetch('/api/getPdf?url=' + url)
-      .then(res => res.arrayBuffer())
-      .then(arrayBuffer => {
+    const name = url.substring(url.lastIndexOf("/") + 1);
+
+    fetch("/api/getPdf?url=" + url)
+      .then((res) => res.arrayBuffer())
+      .then((arrayBuffer) => {
         const file = new File([arrayBuffer], name);
         setPdfFile(file);
-      }); 
+      });
   }, [resource]); // Add any dependencies here
-  
+
   useEffect(() => {
     getPdf();
-  }, [getPdf]);  
+  }, [getPdf]);
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => nextPage(),
+    onSwipedRight: () => previousPage(),
+  })
 
   return (
     <>
@@ -132,18 +138,19 @@ export default function ResourcePage({ user, resource, type, productName }) {
         </TitleTxt>
         {resource && type == "pdf" ? (
           <>
-            <StyledDocument
-              file={pdfFile}
-              onLoadSuccess={onDocumentLoadSuccess}
-              onContextMenu={(e) => e.preventDefault()}
-              loading={<CustomLoading />}
-            >
-              <StyledPage
-                pageNumber={pageNumber}
-                renderTextLayer={false}
-                renderAnnotationLayer={false}
-              />
-            </StyledDocument>
+              <StyledDocument
+                file={pdfFile}
+                onLoadSuccess={onDocumentLoadSuccess}
+                onContextMenu={(e) => e.preventDefault()}
+                loading={<CustomLoading />}
+                {...handlers}
+              >
+                <StyledPage
+                  pageNumber={pageNumber}
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
+                />
+              </StyledDocument>
             <NavigationDiv>
               <StyledSvg
                 xmlns="http://www.w3.org/2000/svg"
