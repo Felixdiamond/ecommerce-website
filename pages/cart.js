@@ -8,7 +8,7 @@ import axios from "axios";
 import StyledTable from "@/components/Table";
 import Input from "@/components/Input";
 import Notify, { notify } from "@/components/Notification";
-import supabase from "@/lib/connSupa";
+import { logoutUser } from "@/lib/supabase";
 
 const ColumnsWrapper = styled.div`
   display: grid;
@@ -183,6 +183,9 @@ export default function CartPage({ user }) {
   }
 
   if (isSuccess) {
+    setTimeout(() => {
+      logoutUser();
+    }, 7000);
     return (
       <>
         <Header user={user} />
@@ -191,14 +194,14 @@ export default function CartPage({ user }) {
             <Box>
               <h2>Thanks for your Order &nbsp; (✿◡‿◡)</h2>
               <div>
-                Your order has been placed successfully. We will contact you
-                shortly.
+                Your order has been placed successfully. You will be logged out to complete purchase shortly.
               </div>
             </Box>
           </ColumnsWrapper>
         </Center>
       </>
     );
+    
   }
 
   return (

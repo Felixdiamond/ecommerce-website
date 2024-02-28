@@ -16,21 +16,25 @@ export default async function handler(req, res) {
     const orderId = data.metadata.orderId;
     const payment_status = data.status;
     const userId = data.metadata.userId;
-
+    console.log("Payment status: ", payment_status);
+    console.log("Order ID: ", orderId);
+    console.log("User ID: ", userId);
     if (orderId && payment_status === "success") {
       try {
-        await Order.findByIdAndUpdate(orderId, {
+        const result = await Order.findByIdAndUpdate(orderId, {
           paid: true,
         });
         console.log("Updated order");
+        console.log(result);
 
         // Update the user's purchase history
-        await Person.findByIdAndUpdate(
+        const res2 = await Person.findByIdAndUpdate(
           userId,
           { $push: { purchaseHistory: orderId } },
           { new: true, useFindAndModify: false }
         );
         console.log("Updated user's purchase history");
+        console.log(res2);
       } catch (err) {
         console.error(`Error updating order ${orderId}: `, err);
       }
