@@ -112,7 +112,7 @@ const AccessDenied = () => {
   return (
     <StyledDiv className="access-denied">
       <StyledHeader>Oops!</StyledHeader>
-      <StyledP>It seems you don't own this product or page not found.</StyledP>
+      <StyledP>It seems you don&apos;t own this product or page not found.</StyledP>
       <StyledP>
         You can browse other products or head back to the homepage.
       </StyledP>
