@@ -45,7 +45,7 @@
     "react-toastify": "^9.1.3",
     "stripe": "^14.4.0",
     "styled-components": "^6.1.0",
-    "swiper": "^11.0.5",
+    "swiper": "^11.0.7",
     "vidstack": "^0.6.14"
   },
   "devDependencies": {
