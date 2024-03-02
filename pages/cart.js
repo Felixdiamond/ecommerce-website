@@ -253,7 +253,7 @@ export default function CartPage({ user }) {
                         </CustomBtn>
                       </QuantityTd>
                       <td>
-                        ₦
+                        &#8358;
                         {cartProducts.filter((id) => id === product._id)
                           .length * product.discountPrice}
                       </td>
@@ -262,7 +262,7 @@ export default function CartPage({ user }) {
                   <tr>
                     <StyledData>Total</StyledData>
                     <StyledData></StyledData>
-                    <StyledData>₦{total}</StyledData>
+                    <StyledData>&#8358;{total}</StyledData>
                   </tr>
                 </tbody>
               </StyledTable>

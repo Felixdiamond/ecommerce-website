@@ -118,10 +118,10 @@ export default function ProductPage({ product }) {
               <PriceRow>
                 <BlackDivider />
                 <InnerPriceRow>
-                  <Price>₦{product.discountPrice}</Price>
-                  <OldPrice>₦{product.price}</OldPrice>
+                  <Price>&#8358;{product.discountPrice}</Price>
+                  <OldPrice>&#8358;{product.price}</OldPrice>
                   <SavingsInfo>
-                    You save ₦{product.price - product.discountPrice}
+                    You save &#8358;{product.price - product.discountPrice}
                   </SavingsInfo>
                 </InnerPriceRow>
                 <BlackDivider />

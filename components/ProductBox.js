@@ -143,8 +143,8 @@ export default function ProductBox({
         <Title href={uri}>{title}</Title>
         <PriceRow>
           <PriceDiv>
-            <OldPrice>₦{price}</OldPrice>
-            <Price>₦{discountPrice}</Price>
+            <OldPrice>&#8358;{price}</OldPrice>
+            <Price>&#8358;{discountPrice}</Price>
           </PriceDiv>
           <Button
             onClick={() => {
