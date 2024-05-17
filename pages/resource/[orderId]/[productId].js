@@ -2,7 +2,6 @@ import Header from "@/components/Header";
 import { mongooseConnect } from "@/lib/mongoose";
 import { Order } from "@/models/Order";
 import { useEffect, useState, useCallback } from "react";
-import Center from "@/components/Center";
 import { Document, Page, pdfjs } from "react-pdf";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
@@ -18,6 +17,8 @@ import CustomLoading from "@/components/CustomLoading";
 import cookie from "cookie";
 import CryptoJS from "crypto-js";
 import { useSwipeable } from "react-swipeable";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import Notify, { notify } from "@/components/Notification";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -45,25 +46,48 @@ const StyledDocument = styled(Document)`
   align-items: center;
 `;
 
+const ParentNavDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  position: absolute;
+`;
+
 const NavigationDiv = styled.div`
-  width: 8rem;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: white;
+  justify-content: space-between;
   border-radius: 5px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
   position: relative;
-  margin-bottom: 1rem;
+  margin-top: 5rem;
+  background: transparent;
+  position: absolute;
+  transform: translateY(-50%);
 `;
 
-const StyledSvg = styled.svg`
+const Center = styled.div`
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 90vh;
+  position: absolute;
+  padding: 0 1rem;
+  overflow-y: none;
+`;
+
+const StyledSvg = styled.div`
   cursor: pointer;
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
-  max-width: 2rem;
-  max-height: 2rem;
+  /* max-width: 3rem;
+  max-height: 3rem; */
+  /* box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); */
+  z-index: 50;
 `;
 
 const TitleTxt = styled.div`
@@ -74,10 +98,17 @@ const StyledMediaPlayer = styled(MediaPlayer)`
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 `;
 
+const OgaDiv = styled.div`
+  max-height: 100vh;
+  overflow-y: none;
+`;
+
 export default function ResourcePage({ user, resource, type, productName }) {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [pdfFile, setPdfFile] = useState(null);
+
+  notify("Swipe left or right to navigate, or use the arrow button", "info");
 
   const disableRightClick = (e) => {
     e.preventDefault();
@@ -127,10 +158,13 @@ export default function ResourcePage({ user, resource, type, productName }) {
   const handlers = useSwipeable({
     onSwipedLeft: () => nextPage(),
     onSwipedRight: () => previousPage(),
-  })
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true,
+  });
 
   return (
-    <>
+    <OgaDiv {...handlers}>
+      <Notify />
       <Header />
       <Center>
         <TitleTxt>
@@ -138,57 +172,29 @@ export default function ResourcePage({ user, resource, type, productName }) {
         </TitleTxt>
         {resource && type == "pdf" ? (
           <>
-              <StyledDocument
-                {...handlers}
-                file={pdfFile}
-                onLoadSuccess={onDocumentLoadSuccess}
-                onContextMenu={(e) => e.preventDefault()}
-                loading={<CustomLoading />}
-              >
-                <StyledPage
-                  {...handlers}
-                  pageNumber={pageNumber}
-                  renderTextLayer={false}
-                  renderAnnotationLayer={false}
-                />
-              </StyledDocument>
+            <StyledDocument
+              file={pdfFile}
+              onLoadSuccess={onDocumentLoadSuccess}
+              onContextMenu={(e) => e.preventDefault()}
+              loading={<CustomLoading />}
+            >
+              <StyledPage
+                pageNumber={pageNumber}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+              />
+            </StyledDocument>
             <NavigationDiv>
-              <StyledSvg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-                disabled={pageNumber <= 1}
-                onClick={previousPage}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 19.5L8.25 12l7.5-7.5"
-                />
+              <StyledSvg onClick={previousPage} disabled={pageNumber <= 1}>
+                <FaChevronLeft size={40} />
               </StyledSvg>
-              <p>
-                {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
-              </p>
-              <StyledSvg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-                disabled={pageNumber >= numPages}
-                onClick={nextPage}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                />
+              <StyledSvg onClick={nextPage} disabled={pageNumber >= numPages}>
+                <FaChevronRight size={40} />
               </StyledSvg>
             </NavigationDiv>
+            <p>
+              {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
+            </p>
           </>
         ) : (
           <StyledMediaPlayer
@@ -201,7 +207,7 @@ export default function ResourcePage({ user, resource, type, productName }) {
           </StyledMediaPlayer>
         )}
       </Center>
-    </>
+    </OgaDiv>
   );
 }
 
