@@ -108,7 +108,9 @@ export default function ResourcePage({ user, resource, type, productName }) {
   const [pageNumber, setPageNumber] = useState(1);
   const [pdfFile, setPdfFile] = useState(null);
 
-  notify("Swipe left or right to navigate, or use the arrow button", "info");
+  useEffect(() => {
+    notify("Swipe left or right to navigate, or use the arrow button", "info");
+  }, []);
 
   const disableRightClick = (e) => {
     e.preventDefault();
